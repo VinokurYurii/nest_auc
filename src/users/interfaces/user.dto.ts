@@ -4,4 +4,5 @@ export class UserDto {
   readonly lastName: string;
   readonly phone: string;
   readonly birthDay?: Date;
+  readonly password: string;
 }

@@ -19,4 +19,7 @@ export class User {
 
   @Column({nullable: false})
   birthDay: Date;
+
+  @Column({nullable: false, default: ''})
+  password: string
 }

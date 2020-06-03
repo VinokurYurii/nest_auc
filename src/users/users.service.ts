@@ -14,12 +14,15 @@ export class UsersService {
   ) {}
 
   async insertUser(userDto: UserDto): Promise<User> {
-    const user: User = new User();
-    user.email = userDto.email;
-    user.firstName = userDto.firstName;
-    user.lastName = userDto.lastName;
-    user.phone = userDto.phone;
-    user.birthDay = !!userDto.birthDay ? userDto.birthDay : new Date();
+    let user: User = new User();
+    user.birthDay = new Date();
+    user = Object.assign(user, userDto);
+    // user.email = userDto.email;
+    // user.firstName = userDto.firstName;
+    // user.lastName = userDto.lastName;
+    // user.phone = userDto.phone;
+    // user.password = userDto.password;
+    // user.birthDay = !!userDto.birthDay ? userDto.birthDay : new Date();
 
     return this.userRepository.save(user);
   }
@@ -44,6 +47,16 @@ export class UsersService {
     const user: User = await this.findUser(userId);
 
     this.userRepository.remove(user);
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const user: User = await this.userRepository.findOne({email: email});
+
+    if(!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 
   private async findUser(userId: string): Promise<User> {

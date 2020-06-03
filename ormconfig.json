@@ -3,7 +3,7 @@
   "database": "./mydb.sql",
   "entities": ["dist/**/*.entity{.ts,.js}"],
   "migrations": ["dist/migrations/*.ts"],
-  "synchronize": true,
+  "synchronize": false,
   "cli": {
     "migrationsDir": "src/migrations"
   }

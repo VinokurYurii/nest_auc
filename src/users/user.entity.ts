@@ -5,7 +5,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: false})
+  @Column({nullable: false, unique: true})
   email: string;
 
   @Column({nullable: false})
@@ -14,12 +14,19 @@ export class User {
   @Column({nullable: false})
   lastName: string;
 
-  @Column({nullable: false})
+  @Column({nullable: false, unique: true})
   phone: string;
 
   @Column({nullable: false})
   birthDay: Date;
 
   @Column({nullable: false, default: ''})
-  password: string
+  password: string;
+
+  @Column({nullable: false, default: ''})
+  salt: string;
+
+  fullName(): string {
+    return this.firstName + ' ' + this.lastName
+  }
 }

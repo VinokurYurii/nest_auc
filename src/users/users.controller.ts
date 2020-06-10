@@ -1,6 +1,5 @@
-import {Body, Controller, Get, Post, Param, Patch, Delete, UseGuards, Request} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Delete, UseGuards, Request, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service'
-import { UserCreateDto } from "./interfaces/user.create.dto";
 import { UserUpdateDto } from "./interfaces/user.update.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
@@ -11,11 +10,6 @@ export class UsersController {
   ) {
   }
 
-  @Post()
-  addUser(@Body() userDto: UserCreateDto): {} {
-    return this.usersService.insertUser(userDto);
-  }
-
   @Get()
   index() {
     return this.usersService.getUsers();
@@ -23,20 +17,20 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  show(@Param('id') userId: string, @Request() req) {
+  show(@Param('id', ParseIntPipe) userId: number, @Request() req) {
     return this.usersService.getUser(userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') userId: string,
+  update(@Param('id', ParseIntPipe) userId: number,
          @Body() userDto: UserUpdateDto,
          @Request() req): {} {
     return this.usersService.updateUser(userId, userDto)
   }
 
   @Delete(':id')
-  delete(@Param('id') userId: string) {
+  delete(@Param('id', ParseIntPipe) userId: number) {
     this.usersService.delete(userId);
   }
 }

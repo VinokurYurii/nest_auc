@@ -15,21 +15,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>
   ) {}
 
-  async insertUser(userDto: UserCreateDto): Promise<User> {
-    const existedPhoneOrEmailUser = await this.findByPhoneOrEmail(userDto.phone, userDto.email);
-
-    if (existedPhoneOrEmailUser) {
-      throw new ConflictException("User with some email or phone already exists.");
-    }
-
-    const {password, ...userData} = userDto;
-
-    let user: User = new User();
-    user.salt = await bcrypt.genSalt();
-    user.password = await this.hashPassword(password, user.salt);
-    user.birthDay = new Date();
-    user = Object.assign(user, userData);
-
+  async saveUser(user: User): Promise<User> {
     return this.userRepository.save(user);
   }
 
@@ -37,11 +23,11 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async getUser(userId: string): Promise<User> {
+  async getUser(userId: number): Promise<User> {
     return this.findUser(userId);
   }
 
-  async updateUser(userId: string, userDto: UserUpdateDto): Promise<User> {
+  async updateUser(userId: number, userDto: UserUpdateDto): Promise<User> {
     const user: User = await this.findUser(userId);
 
 
@@ -53,15 +39,10 @@ export class UsersService {
 
     Object.assign(user, userDto);
 
-    if(userDto.password) {
-      user.salt = await bcrypt.genSalt();
-      user.password = await this.hashPassword(userDto.password, user.salt);
-    }
-
     return this.userRepository.save(user);
   }
 
-  async delete(userId: string): Promise<void> {
+  async delete(userId: number): Promise<void> {
     const user: User = await this.findUser(userId);
 
     this.userRepository.remove(user);
@@ -71,7 +52,7 @@ export class UsersService {
     return this.userRepository.findOne({email: email});
   }
 
-  private async findUser(userId: string): Promise<User> {
+  private async findUser(userId: number): Promise<User> {
     const user: User = await this.userRepository.findOne(userId);
 
     if(!user) {
@@ -81,7 +62,7 @@ export class UsersService {
     return user;
   }
 
-  private async findByPhoneOrEmail(phone: string, email?: string): Promise<User> {
+  public async findByPhoneOrEmail(phone: string, email?: string): Promise<User> {
     if(email) {
       const user = await this.findByEmail(email);
 
@@ -93,7 +74,7 @@ export class UsersService {
     return this.userRepository.findOne({phone: phone});
   }
 
-  private async hashPassword(rawPassword, salt): Promise<string> {
-    return bcrypt.hash(rawPassword, salt);
+  public async findByEmailHash(emailHash: string): Promise<User> {
+    return this.userRepository.findOne({mailConfirmationHashString: emailHash});
   }
 }

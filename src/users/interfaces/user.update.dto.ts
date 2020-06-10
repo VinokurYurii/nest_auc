@@ -3,5 +3,4 @@ export class UserUpdateDto  {
   readonly lastName: string;
   readonly phone: string;
   readonly birthDay?: Date;
-  readonly password: string;
 }

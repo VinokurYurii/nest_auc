@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {Entity, Column, PrimaryGeneratedColumn, Index} from 'typeorm';
 
 @Entity()
 export class User {
@@ -23,8 +23,12 @@ export class User {
   @Column({nullable: false, default: ''})
   password: string;
 
-  @Column({nullable: false, default: ''})
-  salt: string;
+  @Index()
+  @Column()
+  mailConfirmationHashString: string;
+
+  @Column({nullable: false, default: false})
+  mailConfirmed: boolean;
 
   fullName(): string {
     return this.firstName + ' ' + this.lastName
